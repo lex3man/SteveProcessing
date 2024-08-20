@@ -3,10 +3,21 @@ package main
 import (
 	"core/processing/api/bot"
 	"core/processing/api/front"
+	"core/processing/configs"
+	"fmt"
 	"log"
+
+	"github.com/joho/godotenv"
 
 	"github.com/gin-gonic/gin"
 )
+
+func init() {
+	err := godotenv.Load("configs/.env")
+	if err != nil {
+		log.Fatalf("Error while loading env file with %s", err)
+	}
+}
 
 func main() {
 	router := gin.Default()
@@ -17,7 +28,10 @@ func main() {
 	bot.GetRoutes(botAPI)
 	front.GetRoutes(frontendAPI)
 
-	err := router.Run("0.0.0.0:3000")
+	config := configs.GetConfig()
+	serv := fmt.Sprintf("0.0.0.0:%d", config.Server.Port)
+
+	err := router.Run(serv)
 	if err != nil {
 		log.Fatal("Something goes wrong...")
 	}
