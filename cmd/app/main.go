@@ -1,7 +1,8 @@
 package main
 
 import (
-	"core/processing/internal/utils"
+	"core/processing/api/bot"
+	"core/processing/api/front"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -9,7 +10,12 @@ import (
 
 func main() {
 	router := gin.Default()
-	router.GET("/api/v1/status", utils.GetStatus)
+
+	frontendAPI := router.Group("/face")
+	botAPI := router.Group("/api/v1")
+
+	bot.GetRoutes(botAPI)
+	front.GetRoutes(frontendAPI)
 
 	err := router.Run("0.0.0.0:3000")
 	if err != nil {
